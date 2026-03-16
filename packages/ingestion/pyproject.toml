@@ -1,0 +1,34 @@
+[project]
+name = "healthcare-price-ingestion"
+version = "0.1.0"
+description = "CMS MRF ingestion pipeline — download, parse, normalize, load"
+requires-python = ">=3.11"
+dependencies = [
+    "polars>=1.0.0",
+    "pyarrow>=16.0.0",
+    "duckdb>=1.0.0",
+    "httpx>=0.27.0",
+    "pydantic>=2.7.0",
+    "pydantic-settings>=2.3.0",
+    "python-dotenv>=1.0.0",
+    "structlog>=24.2.0",
+    "pyyaml>=6.0.1",
+    "ijson>=3.3.0",       # Streaming JSON parser for multi-GB MRF files
+    "aiofiles>=23.2.1",
+    "tqdm>=4.66.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.2.0",
+    "pytest-asyncio>=0.23.0",
+    "ruff>=0.5.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"

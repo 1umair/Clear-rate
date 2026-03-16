@@ -1,0 +1,450 @@
+{
+  "version": "1.0",
+  "description": "ClearRate-Bench: Natural language to SQL benchmark for healthcare price intelligence over CMS MRF data. DC Metro market (35.9M rows, 30 hospitals, 4 networks).",
+  "schema": {
+    "table": "master_price_graph",
+    "columns": [
+      "reporting_entity_name",
+      "billing_code",
+      "billing_code_type",
+      "name",
+      "negotiated_rate",
+      "negotiated_type",
+      "plan_name",
+      "billing_class",
+      "state_code",
+      "is_current",
+      "last_updated_on"
+    ],
+    "always_filter": "is_current = true"
+  },
+  "questions": [
+    {
+      "id": "cb-001",
+      "question": "Which hospital has the lowest median negotiated rate for total knee replacement?",
+      "difficulty": "easy",
+      "category": "ranking",
+      "intent_type": "lookup",
+      "billing_codes": [
+        "470"
+      ],
+      "billing_code_type": "MS-DRG",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "Expect LewisGale Hospital Pulaski at ~$3,729"
+    },
+    {
+      "id": "cb-002",
+      "question": "What is the median negotiated rate for an MRI brain with contrast across all DC Metro hospitals?",
+      "difficulty": "easy",
+      "category": "ranking",
+      "intent_type": "lookup",
+      "billing_codes": [
+        "70553"
+      ],
+      "billing_code_type": "CPT",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "Single aggregation, no GROUP BY"
+    },
+    {
+      "id": "cb-003",
+      "question": "List all hospitals that report rates for CPT 93454 cardiac catheterization, with their median and max rates.",
+      "difficulty": "easy",
+      "category": "comparison",
+      "intent_type": "lookup",
+      "billing_codes": [
+        "93454"
+      ],
+      "billing_code_type": "CPT",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "Simple GROUP BY reporting_entity_name"
+    },
+    {
+      "id": "cb-004",
+      "question": "What is the minimum negotiated rate for a colonoscopy at any hospital in the DC Metro region?",
+      "difficulty": "easy",
+      "category": "ranking",
+      "intent_type": "lookup",
+      "billing_codes": [
+        "45378"
+      ],
+      "billing_code_type": "CPT",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "MIN aggregation only"
+    },
+    {
+      "id": "cb-005",
+      "question": "How many distinct payer and plan combinations does Inova Fairfax Hospital have in the database?",
+      "difficulty": "easy",
+      "category": "data_quality",
+      "intent_type": "general",
+      "billing_codes": [],
+      "billing_code_type": null,
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "COUNT DISTINCT plan_name"
+    },
+    {
+      "id": "cb-006",
+      "question": "Which DC Metro hospitals do not have any rates for MS-DRG 470 total knee replacement?",
+      "difficulty": "easy",
+      "category": "data_quality",
+      "intent_type": "general",
+      "billing_codes": [
+        "470"
+      ],
+      "billing_code_type": "MS-DRG",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "Anti-join or NOT IN subquery"
+    },
+    {
+      "id": "cb-007",
+      "question": "What is the median rate for an emergency room level 5 visit at MedStar Washington Hospital Center?",
+      "difficulty": "easy",
+      "category": "ranking",
+      "intent_type": "lookup",
+      "billing_codes": [
+        "99285"
+      ],
+      "billing_code_type": "CPT",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "Single hospital filter + MEDIAN"
+    },
+    {
+      "id": "cb-008",
+      "question": "Show me all negotiated rates for CPT 47562 gallbladder removal sorted from lowest to highest.",
+      "difficulty": "easy",
+      "category": "ranking",
+      "intent_type": "lookup",
+      "billing_codes": [
+        "47562"
+      ],
+      "billing_code_type": "CPT",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "ORDER BY negotiated_rate ASC"
+    },
+    {
+      "id": "cb-009",
+      "question": "How many price records does each hospital have in the database?",
+      "difficulty": "easy",
+      "category": "data_quality",
+      "intent_type": "general",
+      "billing_codes": [],
+      "billing_code_type": null,
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "COUNT(*) GROUP BY reporting_entity_name"
+    },
+    {
+      "id": "cb-010",
+      "question": "What is the most expensive single negotiated rate in the entire DC Metro dataset?",
+      "difficulty": "easy",
+      "category": "ranking",
+      "intent_type": "lookup",
+      "billing_codes": [],
+      "billing_code_type": null,
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "MAX(negotiated_rate) across all rows"
+    },
+    {
+      "id": "cb-011",
+      "question": "Compare median knee replacement rates between Inova Health and MedStar Health.",
+      "difficulty": "medium",
+      "category": "comparison",
+      "intent_type": "compare",
+      "billing_codes": [
+        "470"
+      ],
+      "billing_code_type": "MS-DRG",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "GROUP BY network (ILIKE pattern)"
+    },
+    {
+      "id": "cb-012",
+      "question": "What are the Cigna negotiated rates for a colonoscopy at each Inova hospital?",
+      "difficulty": "medium",
+      "category": "payer_specific",
+      "intent_type": "lookup",
+      "billing_codes": [
+        "45378"
+      ],
+      "billing_code_type": "CPT",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "plan_name ILIKE '%cigna%' AND reporting_entity_name ILIKE '%Inova%'"
+    },
+    {
+      "id": "cb-013",
+      "question": "Which network has the lowest median rate for cardiac catheterization: Inova, HCA Virginia, UVA Health, or MedStar?",
+      "difficulty": "medium",
+      "category": "comparison",
+      "intent_type": "compare",
+      "billing_codes": [
+        "93454"
+      ],
+      "billing_code_type": "CPT",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "CASE WHEN network classification + GROUP BY"
+    },
+    {
+      "id": "cb-014",
+      "question": "Show me Aetna rates for MRI brain with contrast at HCA Virginia hospitals, broken down by hospital.",
+      "difficulty": "medium",
+      "category": "payer_specific",
+      "intent_type": "lookup",
+      "billing_codes": [
+        "70553"
+      ],
+      "billing_code_type": "CPT",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "payer filter + HCA hospital list ILIKE"
+    },
+    {
+      "id": "cb-015",
+      "question": "What is the ratio of the highest to lowest median hospital rate for a gallbladder removal in the DC Metro region?",
+      "difficulty": "medium",
+      "category": "comparison",
+      "intent_type": "compare",
+      "billing_codes": [
+        "47562"
+      ],
+      "billing_code_type": "CPT",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "MAX(median)/MIN(median) in subquery"
+    },
+    {
+      "id": "cb-016",
+      "question": "Compare outpatient colonoscopy rates between Virginia hospitals and Maryland or DC hospitals.",
+      "difficulty": "medium",
+      "category": "comparison",
+      "intent_type": "compare",
+      "billing_codes": [
+        "45378"
+      ],
+      "billing_code_type": "CPT",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "state_code IN ('VA') vs IN ('MD','DC') GROUP BY"
+    },
+    {
+      "id": "cb-017",
+      "question": "Which payer has the lowest median rate for knee replacement across all DC Metro hospitals?",
+      "difficulty": "medium",
+      "category": "payer_specific",
+      "intent_type": "lookup",
+      "billing_codes": [
+        "470"
+      ],
+      "billing_code_type": "MS-DRG",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "GROUP BY plan_name ORDER BY MEDIAN"
+    },
+    {
+      "id": "cb-018",
+      "question": "How does the spread of knee replacement rates at HCA Virginia compare to the spread at Inova? Show min, median, max, and standard deviation for each network.",
+      "difficulty": "medium",
+      "category": "comparison",
+      "intent_type": "compare",
+      "billing_codes": [
+        "470"
+      ],
+      "billing_code_type": "MS-DRG",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "STDDEV_POP or similar + CASE WHEN network"
+    },
+    {
+      "id": "cb-019",
+      "question": "What are the five most common billing code types in the DC Metro price graph by record count?",
+      "difficulty": "medium",
+      "category": "data_quality",
+      "intent_type": "general",
+      "billing_codes": [],
+      "billing_code_type": null,
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "COUNT(*) GROUP BY billing_code_type ORDER BY count DESC LIMIT 5"
+    },
+    {
+      "id": "cb-020",
+      "question": "Which UVA Health hospital has the lowest rates for outpatient procedures under United Healthcare?",
+      "difficulty": "medium",
+      "category": "payer_specific",
+      "intent_type": "lookup",
+      "billing_codes": [],
+      "billing_code_type": null,
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "UVA + UHC + billing_class=professional + MEDIAN GROUP BY hospital"
+    },
+    {
+      "id": "cb-021",
+      "question": "Show the median Cigna rate for each hospital across the DC Metro region, ranked from lowest to highest. Break results into overall, inpatient, and outpatient categories.",
+      "difficulty": "hard",
+      "category": "payer_specific",
+      "intent_type": "cost_model",
+      "billing_codes": [],
+      "billing_code_type": null,
+      "gold_sql": "```sql\nWITH base AS (\n    SELECT\n        reporting_entity_name,\n        billing_class,\n        negotiated_rate\n    FROM master_price_graph\n    WHERE is_current = true\n      AND plan_name ILIKE '%Cigna%'\n      AND negotiated_type = 'negotiated'\n      AND negotiated_rate > 0\n),\n\noverall AS (\n    SELECT\n        reporting_entity_name,\n        'Overall' AS category,\n        ROUND(MEDIAN(negotiated_rate), 2) AS median_rate,\n        COUNT(*) AS rate_count\n    FROM base\n    GROUP BY reporting_entity_name\n),\n\ninpatient AS (\n    SELECT\n        reporting_entity_name,\n        'Inpatient' AS category,\n        ROUND(MEDIAN(negotiated_rate), 2) AS median_rate,\n        COUNT(*) AS rate_count\n    FROM base\n    WHERE billing_class = 'institutional'\n    GROUP BY reporting_entity_name\n),\n\noutpatient AS (\n    SELECT\n        reporting_entity_name,\n        'Outpatient' AS category,\n        ROUND(MEDIAN(negotiated_rate), 2) AS median_rate,\n        COUNT(*) AS rate_count\n    FROM base\n    WHERE billing_class = 'professional'\n    GROUP BY reporting_entity_name\n),\n\ncombined AS (\n    SELECT * FROM overall\n    UNION ALL\n    SELECT * FROM inpatient\n    UNION ALL\n    SELECT * FROM outpatient\n)\n\nSELECT\n    reporting_entity_name AS hospital,\n    category,\n    median_rate,\n    rate_count\nFROM combined\nORDER BY\n    category,\n    median_rate ASC\nLIMIT 500\n```",
+      "gold_result_preview": null,
+      "notes": "Multi-CTE + UNION ALL + RANK() OVER() -- the Cigna benchmark query",
+      "execution_ms": 8392,
+      "row_count": 0
+    },
+    {
+      "id": "cb-022",
+      "question": "For each procedure among colonoscopy, knee replacement, MRI brain, and cardiac catheterization, which hospital has the single lowest median negotiated rate?",
+      "difficulty": "hard",
+      "category": "ranking",
+      "intent_type": "compare",
+      "billing_codes": [
+        "45378",
+        "470",
+        "70553",
+        "93454"
+      ],
+      "billing_code_type": "mixed",
+      "gold_sql": "WITH procedure_medians AS (\n    SELECT\n        name,\n        billing_code,\n        reporting_entity_name,\n        ROUND(MEDIAN(negotiated_rate), 2) AS median_rate,\n        COUNT(*) AS rate_count\n    FROM master_price_graph\n    WHERE is_current = true\n      AND billing_code_type = 'CPT'\n      AND billing_code IN ('45378', '27447', '70553', '93454')\n      AND negotiated_rate > 0\n    GROUP BY name, billing_code, reporting_entity_name\n),\nprocedure_labels AS (\n    SELECT\n        CASE billing_code\n            WHEN '45378' THEN 'Colonoscopy (CPT 45378)'\n            WHEN '27447' THEN 'Knee Replacement (CPT 27447)'\n            WHEN '70553' THEN 'MRI Brain w/wo Contrast (CPT 70553)'\n            WHEN '93454' THEN 'Cardiac Catheterization (CPT 93454)'\n        END AS procedure_label,\n        billing_code,\n        reporting_entity_name,\n        median_rate,\n        rate_count\n    FROM procedure_medians\n),\nranked AS (\n    SELECT\n        procedure_label,\n        billing_code,\n        reporting_entity_name,\n        median_rate,\n        rate_count,\n        RANK() OVER (PARTITION BY billing_code ORDER BY median_rate ASC) AS rnk\n    FROM procedure_labels\n)\nSELECT\n    procedure_label,\n    reporting_entity_name AS hospital_with_lowest_rate,\n    median_rate AS lowest_median_rate,\n    rate_count AS contributing_rates\nFROM ranked\nWHERE rnk = 1\nORDER BY billing_code\nLIMIT 20",
+      "gold_result_preview": null,
+      "notes": "Multi-procedure: UNION ALL per code + RANK() OVER(PARTITION BY billing_code)",
+      "execution_ms": 25488,
+      "row_count": 6
+    },
+    {
+      "id": "cb-023",
+      "question": "What percentage of DC Metro hospitals charge more than $20,000 as their median rate for a knee replacement?",
+      "difficulty": "hard",
+      "category": "cost_modeling",
+      "intent_type": "cost_model",
+      "billing_codes": [
+        "470"
+      ],
+      "billing_code_type": "MS-DRG",
+      "gold_sql": "```sql\nWITH hospital_medians AS (\n    SELECT\n        reporting_entity_name,\n        ROUND(MEDIAN(negotiated_rate), 2) AS median_rate\n    FROM master_price_graph\n    WHERE is_current = true\n      AND billing_code = '27447'\n      AND billing_code_type = 'CPT'\n      AND negotiated_rate > 0\n    GROUP BY reporting_entity_name\n),\nsummary AS (\n    SELECT\n        COUNT(*) AS total_hospitals,\n        COUNT(CASE WHEN median_rate > 20000 THEN 1 END) AS hospitals_above_20k,\n        ROUND(\n            COUNT(CASE WHEN median_rate > 20000 THEN 1 END) * 100.0 / COUNT(*),\n            2\n        ) AS pct_above_20k\n    FROM hospital_medians\n)\nSELECT\n    total_hospitals,\n    hospitals_above_20k,\n    pct_above_20k AS pct_hospitals_above_20000,\n    (SELECT ROUND(MEDIAN(median_rate), 2) FROM hospital_medians) AS overall_median_rate,\n    (SELECT reporting_entity_name FROM hospital_medians ORDER BY median_rate DESC LIMIT 1) AS highest_median_hospital,\n    (SELECT MAX(median_rate) FROM hospital_medians) AS highest_median_rate,\n    (SELECT reporting_entity_name FROM hospital_medians ORDER BY median_rate ASC LIMIT 1) AS lowest_median_hospital,\n    (SELECT MIN(median_rate) FROM hospital_medians) AS lowest_median_rate\nFROM summary\nLIMIT 1\n```",
+      "gold_result_preview": null,
+      "notes": "CTE for medians + outer COUNT FILTER / total COUNT",
+      "execution_ms": 11234,
+      "row_count": 0
+    },
+    {
+      "id": "cb-024",
+      "question": "Which hospital shows the greatest variance between its highest and lowest payer rates for total knee replacement?",
+      "difficulty": "hard",
+      "category": "comparison",
+      "intent_type": "compare",
+      "billing_codes": [
+        "470"
+      ],
+      "billing_code_type": "MS-DRG",
+      "gold_sql": "```sql\nSELECT\n    reporting_entity_name,\n    COUNT(DISTINCT plan_name) AS num_payers,\n    ROUND(MIN(negotiated_rate), 2) AS min_rate,\n    ROUND(MAX(negotiated_rate), 2) AS max_rate,\n    ROUND(MAX(negotiated_rate) - MIN(negotiated_rate), 2) AS rate_variance,\n    ROUND(MEDIAN(negotiated_rate), 2) AS median_rate,\n    ROUND(\n        (MAX(negotiated_rate) - MIN(negotiated_rate)) / NULLIF(MIN(negotiated_rate), 0) * 100,\n        2\n    ) AS pct_variance\nFROM master_price_graph\nWHERE is_current = true\n  AND billing_code = '27447'\n  AND billing_code_type = 'CPT'\n  AND negotiated_type = 'negotiated'\nGROUP BY reporting_entity_name\nHAVING COUNT(DISTINCT plan_name) >= 2\nORDER BY rate_variance DESC\nLIMIT 50\n```",
+      "gold_result_preview": null,
+      "notes": "(MAX - MIN) per hospital, ORDER BY spread DESC LIMIT 1",
+      "execution_ms": 11741,
+      "row_count": 0
+    },
+    {
+      "id": "cb-025",
+      "question": "Compare the top 3 and bottom 3 hospitals by median colonoscopy rate. Show their network affiliation and whether they are in Virginia, DC, or Maryland.",
+      "difficulty": "hard",
+      "category": "ranking",
+      "intent_type": "compare",
+      "billing_codes": [
+        "45378"
+      ],
+      "billing_code_type": "CPT",
+      "gold_sql": "WITH colonoscopy_rates AS (\n    SELECT\n        reporting_entity_name,\n        state_code,\n        CASE\n            WHEN reporting_entity_name ILIKE '%Inova%' THEN 'Inova Health'\n            WHEN reporting_entity_name ILIKE '%HCA%'\n              OR reporting_entity_name ILIKE '%Chippenham%'\n              OR reporting_entity_name ILIKE '%Dominion%'\n              OR reporting_entity_name ILIKE '%Henrico%'\n              OR reporting_entity_name ILIKE '%Johnston-Willis%'\n              OR reporting_entity_name ILIKE '%Reston%'\n              OR reporting_entity_name ILIKE '%Spotsylvania%'\n              OR reporting_entity_name ILIKE '%StoneSprings%'\n              OR reporting_entity_name ILIKE '%LewisGale%' THEN 'HCA Virginia'\n            WHEN reporting_entity_name ILIKE '%UVA%' THEN 'UVA Health'\n            WHEN reporting_entity_name ILIKE '%MedStar%' THEN 'MedStar Health'\n            ELSE 'Other'\n        END AS network,\n        ROUND(MEDIAN(negotiated_rate), 2) AS median_rate,\n        COUNT(*) AS rate_count\n    FROM master_price_graph\n    WHERE\n        is_current = true\n        AND billing_code = '45378'\n        AND billing_code_type = 'CPT'\n        AND negotiated_type = 'negotiated'\n    GROUP BY\n        reporting_entity_name,\n        state_code\n),\nranked AS (\n    SELECT\n        reporting_entity_name,\n        network,\n        state_code,\n        median_rate,\n        rate_count,\n        RANK() OVER (ORDER BY median_rate ASC) AS rank_asc,\n        RANK() OVER (ORDER BY median_rate DESC) AS rank_desc\n    FROM colonoscopy_rates\n    WHERE rate_count >= 3\n)\nSELECT\n    reporting_entity_name,\n    network,\n    CASE\n        WHEN state_code = 'VA' THEN 'Virginia'\n        WHEN state_code = 'DC' THEN 'Washington DC'\n        WHEN state_code = 'MD' THEN 'Maryland'\n        ELSE state_code\n    END AS state_label,\n    median_rate,\n    rate_count,\n    CASE\n        WHEN rank_asc <= 3 THEN 'Bottom 3 (Lowest Rate)'\n        WHEN rank_desc <= 3 THEN 'Top 3 (Highest Rate)'\n    END AS ranking_group\nFROM ranked\nWHERE rank_asc <= 3 OR rank_desc <= 3\nORDER BY median_rate DESC\nLIMIT 50",
+      "gold_result_preview": null,
+      "notes": "UNION ALL of top 3 + bottom 3 via subquery + state_code join",
+      "execution_ms": 29042,
+      "row_count": 4
+    },
+    {
+      "id": "cb-026",
+      "question": "For each of the four networks, what fraction of their total price records are for inpatient versus outpatient billing class?",
+      "difficulty": "hard",
+      "category": "data_quality",
+      "intent_type": "general",
+      "billing_codes": [],
+      "billing_code_type": null,
+      "gold_sql": "With the clarification that \"network\" maps to the four health systems (Inova, HCA Virginia, UVA Health, MedStar), here is the query:\n\n```sql\nSELECT\n    CASE\n        WHEN reporting_entity_name ILIKE '%Inova%' THEN 'Inova Health'\n        WHEN reporting_entity_name ILIKE '%HCA%'\n          OR reporting_entity_name ILIKE '%Chippenham%'\n          OR reporting_entity_name ILIKE '%Dominion%'\n          OR reporting_entity_name ILIKE '%Henrico%'\n          OR reporting_entity_name ILIKE '%Johnston-Willis%'\n          OR reporting_entity_name ILIKE '%Reston%'\n          OR reporting_entity_name ILIKE '%Spotsylvania%'\n          OR reporting_entity_name ILIKE '%StoneSprings%'\n          OR reporting_entity_name ILIKE '%LewisGale%' THEN 'HCA Virginia'\n        WHEN reporting_entity_name ILIKE '%UVA%' THEN 'UVA Health'\n        WHEN reporting_entity_name ILIKE '%MedStar%' THEN 'MedStar Health'\n        ELSE 'Other'\n    END AS network,\n    billing_class,\n    COUNT(*) AS record_count,\n    ROUND(\n        COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (\n            PARTITION BY\n                CASE\n                    WHEN reporting_entity_name ILIKE '%Inova%' THEN 'Inova Health'\n                    WHEN reporting_entity_name ILIKE '%HCA%'\n                      OR reporting_entity_name ILIKE '%Chippenham%'\n                      OR reporting_entity_name ILIKE '%Dominion%'\n                      OR reporting_entity_name ILIKE '%Henrico%'\n                      OR reporting_entity_name ILIKE '%Johnston-Willis%'\n                      OR reporting_entity_name ILIKE '%Reston%'\n                      OR reporting_entity_name ILIKE '%Spotsylvania%'\n                      OR reporting_entity_name ILIKE '%StoneSprings%'\n                      OR reporting_entity_name ILIKE '%LewisGale%' THEN 'HCA Virginia'\n                    WHEN reporting_entity_name ILIKE '%UVA%' THEN 'UVA Health'\n                    WHEN reporting_entity_name ILIKE '%MedStar%' THEN 'MedStar Health'\n                    ELSE 'Other'\n                END\n        ),\n        2\n    ) AS pct_of_network\nFROM master_price_graph\nWHERE is_current = true\n  AND billing_class IN ('institutional', 'professional')\nGROUP BY network, billing_class\nHAVING network != 'Other'\nORDER BY network, billing_class\nLIMIT 50\n```",
+      "gold_result_preview": null,
+      "notes": "CASE WHEN network + COUNT FILTER billing_class",
+      "execution_ms": 11436,
+      "row_count": 0
+    },
+    {
+      "id": "cb-027",
+      "question": "Which 10 procedures have the highest price spread (max to min ratio) across DC Metro hospitals, excluding percent-of-billed-charges rates?",
+      "difficulty": "hard",
+      "category": "comparison",
+      "intent_type": "compare",
+      "billing_codes": [],
+      "billing_code_type": null,
+      "gold_sql": "WITH procedure_spreads AS (\n    SELECT\n        billing_code,\n        billing_code_type,\n        name,\n        COUNT(DISTINCT reporting_entity_name) AS hospital_count,\n        ROUND(MIN(negotiated_rate), 2) AS min_rate,\n        ROUND(MAX(negotiated_rate), 2) AS max_rate,\n        ROUND(MEDIAN(negotiated_rate), 2) AS median_rate,\n        ROUND(MAX(negotiated_rate) / NULLIF(MIN(negotiated_rate), 0), 2) AS max_min_ratio\n    FROM master_price_graph\n    WHERE\n        is_current = true\n        AND negotiated_type != 'percentage'\n        AND negotiated_rate > 0\n        AND name IS NOT NULL\n        AND billing_code IS NOT NULL\n    GROUP BY\n        billing_code,\n        billing_code_type,\n        name\n    HAVING\n        COUNT(DISTINCT reporting_entity_name) >= 5\n        AND MIN(negotiated_rate) > 10\n)\nSELECT\n    billing_code,\n    billing_code_type,\n    name,\n    hospital_count,\n    min_rate,\n    max_rate,\n    median_rate,\n    max_min_ratio\nFROM procedure_spreads\nORDER BY max_min_ratio DESC\nLIMIT 10",
+      "gold_result_preview": null,
+      "notes": "MAX/MIN GROUP BY billing_code + negotiated_type filter + ORDER BY ratio DESC LIMIT 10",
+      "execution_ms": 29989,
+      "row_count": 10
+    },
+    {
+      "id": "cb-028",
+      "question": "If an employer steers all knee replacement cases from Inova hospitals to the lowest-cost HCA Virginia hospital, what is the per-case median savings?",
+      "difficulty": "hard",
+      "category": "cost_modeling",
+      "intent_type": "cost_model",
+      "billing_codes": [
+        "470"
+      ],
+      "billing_code_type": "MS-DRG",
+      "gold_sql": "WITH inova_rates AS (\n    SELECT\n        negotiated_rate\n    FROM master_price_graph\n    WHERE is_current = true\n      AND reporting_entity_name ILIKE '%Inova%'\n      AND billing_code = '27447'\n      AND billing_code_type = 'CPT'\n      AND negotiated_type = 'negotiated'\n),\nhca_rates AS (\n    SELECT\n        reporting_entity_name,\n        MEDIAN(negotiated_rate) AS median_rate\n    FROM master_price_graph\n    WHERE is_current = true\n      AND reporting_entity_name ILIKE '%HCA%'\n      AND billing_code = '27447'\n      AND billing_code_type = 'CPT'\n      AND negotiated_type = 'negotiated'\n    GROUP BY reporting_entity_name\n),\ninova_median AS (\n    SELECT ROUND(MEDIAN(negotiated_rate), 2) AS inova_median_rate\n    FROM inova_rates\n),\nlowest_hca AS (\n    SELECT\n        reporting_entity_name AS lowest_hca_hospital,\n        ROUND(median_rate, 2) AS lowest_hca_median_rate\n    FROM hca_rates\n    ORDER BY median_rate ASC\n    LIMIT 1\n)\nSELECT\n    i.inova_median_rate,\n    h.lowest_hca_hospital,\n    h.lowest_hca_median_rate,\n    ROUND(i.inova_median_rate - h.lowest_hca_median_rate, 2) AS per_case_median_savings\nFROM inova_median i\nCROSS JOIN lowest_hca h",
+      "gold_result_preview": null,
+      "notes": "CTE: Inova median, HCA lowest median, difference",
+      "execution_ms": 22205,
+      "row_count": 0
+    },
+    {
+      "id": "cb-029",
+      "question": "Show MedStar hospitals ranked by their average negotiated rate percentile compared to all DC Metro hospitals for MS-DRG 470.",
+      "difficulty": "hard",
+      "category": "ranking",
+      "intent_type": "compare",
+      "billing_codes": [
+        "470"
+      ],
+      "billing_code_type": "MS-DRG",
+      "gold_sql": "WITH all_hospitals AS (\n    SELECT\n        reporting_entity_name,\n        ROUND(MEDIAN(negotiated_rate), 2) AS median_rate,\n        ROUND(AVG(negotiated_rate), 2) AS avg_rate,\n        COUNT(*) AS rate_count\n    FROM master_price_graph\n    WHERE is_current = true\n      AND billing_code = '470'\n      AND billing_code_type = 'MS-DRG'\n      AND negotiated_type = 'negotiated'\n    GROUP BY reporting_entity_name\n),\nmetro_stats AS (\n    SELECT\n        MEDIAN(negotiated_rate) AS metro_median,\n        AVG(negotiated_rate) AS metro_avg,\n        MIN(negotiated_rate) AS metro_min,\n        MAX(negotiated_rate) AS metro_max,\n        STDDEV(negotiated_rate) AS metro_stddev\n    FROM master_price_graph\n    WHERE is_current = true\n      AND billing_code = '470'\n      AND billing_code_type = 'MS-DRG'\n      AND negotiated_type = 'negotiated'\n),\nhospital_percentiles AS (\n    SELECT\n        h.reporting_entity_name,\n        h.median_rate,\n        h.avg_rate,\n        h.rate_count,\n        m.metro_median,\n        m.metro_avg,\n        m.metro_min,\n        m.metro_max,\n        ROUND(\n            (h.median_rate - m.metro_min) / NULLIF(m.metro_max - m.metro_min, 0) * 100,\n            1\n        ) AS percentile_vs_metro,\n        ROUND(\n            ((h.median_rate - m.metro_avg) / NULLIF(m.metro_stddev, 0)),\n            2\n        ) AS z_score,\n        CASE\n            WHEN h.median_rate <= m.metro_median THEN 'Below Metro Median'\n            ELSE 'Above Metro Median'\n        END AS vs_median_label\n    FROM all_hospitals h\n    CROSS JOIN metro_stats m\n)\nSELECT\n    reporting_entity_name,\n    median_rate AS hospital_median_rate,\n    avg_rate AS hospital_avg_rate,\n    rate_count,\n    ROUND(metro_median, 2) AS metro_median_rate,\n    ROUND(metro_avg, 2) AS metro_avg_rate,\n    percentile_vs_metro AS pct_of_metro_range,\n    z_score,\n    vs_median_label\nFROM hospital_percentiles\nWHERE reporting_entity_name ILIKE '%MedStar%'\nORDER BY percentile_vs_metro DESC\nLIMIT 20",
+      "gold_result_preview": null,
+      "notes": "PERCENT_RANK() or NTILE() window function",
+      "execution_ms": 23826,
+      "row_count": 2
+    },
+    {
+      "id": "cb-030",
+      "question": "What is the correlation between hospital size (number of rate records) and median knee replacement rate across all DC Metro hospitals?",
+      "difficulty": "hard",
+      "category": "cost_modeling",
+      "intent_type": "general",
+      "billing_codes": [
+        "470"
+      ],
+      "billing_code_type": "MS-DRG",
+      "gold_sql": "WITH knee_rates AS (\n    SELECT\n        reporting_entity_name,\n        COUNT(*) AS total_rate_records,\n        MEDIAN(negotiated_rate) AS median_knee_rate,\n        COUNT(CASE WHEN billing_code = '27447' THEN 1 END) AS knee_rate_count,\n        MIN(negotiated_rate) AS min_knee_rate,\n        MAX(negotiated_rate) AS max_knee_rate\n    FROM master_price_graph\n    WHERE is_current = true\n      AND billing_code = '27447'\n      AND billing_code_type IN ('CPT', 'HCPCS')\n      AND negotiated_rate > 0\n    GROUP BY reporting_entity_name\n),\nhospital_volume AS (\n    SELECT\n        reporting_entity_name,\n        COUNT(*) AS total_records_in_db\n    FROM master_price_graph\n    WHERE is_current = true\n    GROUP BY reporting_entity_name\n),\ncombined AS (\n    SELECT\n        k.reporting_entity_name,\n        hv.total_records_in_db,\n        k.knee_rate_count,\n        ROUND(k.median_knee_rate, 2) AS median_knee_rate,\n        ROUND(k.min_knee_rate, 2) AS min_knee_rate,\n        ROUND(k.max_knee_rate, 2) AS max_knee_rate,\n        ROUND(k.max_knee_rate - k.min_knee_rate, 2) AS rate_spread,\n        CASE\n            WHEN hv.total_records_in_db < 50000  THEN '1_Small (<50K records)'\n            WHEN hv.total_records_in_db < 200000 THEN '2_Medium (50K-200K records)'\n            WHEN hv.total_records_in_db < 500000 THEN '3_Large (200K-500K records)'\n            ELSE '4_Very Large (500K+ records)'\n        END AS hospital_size_tier\n    FROM knee_rates k\n    JOIN hospital_volume hv\n      ON k.reporting_entity_name = hv.reporting_entity_name\n)\nSELECT\n    reporting_entity_name,\n    hospital_size_tier,\n    total_records_in_db,\n    knee_rate_count,\n    median_knee_rate,\n    min_knee_rate,\n    max_knee_rate,\n    rate_spread,\n    ROUND(\n        CORR(total_records_in_db, median_knee_rate) OVER (),\n        4\n    ) AS pearson_correlation_all_hospitals,\n    RANK() OVER (ORDER BY median_knee_rate ASC) AS rank_by_median_rate,\n    RANK() OVER (ORDER BY total_records_in_db DESC) AS rank_by_size\nFROM combined\nORDER BY total_records_in_db DESC\nLIMIT 50",
+      "gold_result_preview": null,
+      "notes": "CORR(count, median_rate) -- tests DuckDB statistical functions",
+      "execution_ms": 39437,
+      "row_count": 20
+    }
+  ]
+}

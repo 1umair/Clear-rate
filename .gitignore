@@ -1,0 +1,75 @@
+# ============================================================
+# SECURITY - Never commit these
+# ============================================================
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+secrets/
+
+# ============================================================
+# PROPRIETARY - Core IP, do not commit
+# ============================================================
+packages/ingestion/normalizer/models/
+packages/ingestion/normalizer/embeddings/
+packages/ingestion/normalizer/vectors/
+packages/ingestion/normalizer/*.faiss
+packages/ingestion/normalizer/*.pkl
+packages/ingestion/normalizer/*.bin
+
+# ============================================================
+# DATA - MRF files are massive and contain PII risk
+# ============================================================
+data/
+*.duckdb
+*.duckdb.wal
+*.parquet
+*.csv.gz
+*.json.gz
+
+# ============================================================
+# Python
+# ============================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+dist/
+build/
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+*.log
+
+# ============================================================
+# Node / Next.js
+# ============================================================
+node_modules/
+.next/
+out/
+.turbo/
+*.tsbuildinfo
+
+# ============================================================
+# OS
+# ============================================================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ============================================================
+# IDE
+# ============================================================
+.vscode/settings.json
+.idea/
+*.swp
+*.swo

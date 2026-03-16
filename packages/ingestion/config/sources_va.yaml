@@ -1,0 +1,88 @@
+# ============================================================
+# Virginia Market — CMS MRF Source Configuration
+# April 2026 Schema Enforcement Target
+#
+# IMPORTANT: These are public MRF index URLs published by
+# hospitals under the CMS Price Transparency mandate.
+# Actual negotiated rate files can be 1-50GB each.
+# Configure cms_max_concurrent_downloads in .env accordingly.
+#
+# URL FORMAT: Point to the index JSON file, not the rate file.
+# The downloader will parse the index to find individual files.
+# ============================================================
+
+market:
+  id: va
+  label: Virginia
+  state_code: VA
+
+networks:
+  - id: inova
+    name: Inova Health System
+    short_name: Inova
+    state_code: VA
+    # Inova publishes a machine-readable index JSON.
+    # Replace with the current public URL from their price transparency page.
+    index_url: "https://www.inova.org/price-transparency/machine-readable"
+    plan_market_type: large_group
+    notes: "Multi-hospital system in Northern VA. Typically publishes per-facility files."
+    hospitals:
+      - Inova Fairfax Medical Campus
+      - Inova Fair Oaks Hospital
+      - Inova Loudoun Hospital
+      - Inova Alexandria Hospital
+      - Inova Mount Vernon Hospital
+      - Inova Reston Medical Center
+
+  - id: hca_va
+    name: HCA Virginia Health System
+    short_name: HCA Virginia
+    state_code: VA
+    index_url: "https://www.hcavirginia.com/patients-families/billing-insurance/price-transparency"
+    plan_market_type: large_group
+    notes: "Largest private hospital operator in VA. Files are very large JSON."
+    hospitals:
+      - Chippenham Hospital
+      - Johnston-Willis Hospital
+      - Henrico Doctors' Hospital
+      - Parham Doctors' Hospital
+      - Retreat Doctors' Hospital
+      - Spotsylvania Regional Medical Center
+      - Reston Hospital Center
+      - Dominion Hospital
+      - John Randolph Medical Center
+      - LewisGale Medical Center
+      - LewisGale Hospital Montgomery
+      - LewisGale Hospital Alleghany
+      - LewisGale Hospital Pulaski
+      - Brandon Regional Hospital (FL, exclude from VA queries)
+
+  - id: uva
+    name: UVA Health
+    short_name: UVA Health
+    state_code: VA
+    index_url: "https://uvahealth.com/making-care-simple/your-costs/price-transparency"
+    plan_market_type: large_group
+    notes: "Academic medical center. Often publishes MS-DRG rates for inpatient."
+    hospitals:
+      - UVA Medical Center
+      - UVA Health Culpeper Medical Center
+      - UVA Health Haymarket Medical Center
+      - UVA Health Prince William Medical Center
+      - UVA Community Health
+
+# ── Ingestion behavior ────────────────────────────────────
+ingestion:
+  # Maximum file size to download (bytes). 5GB limit.
+  max_file_size_bytes: 5368709120
+  # File types to ingest from the index
+  target_file_types:
+    - in-network-rates
+  # Skip plan market types we don't care about for MVP
+  skip_plan_market_types:
+    - individual
+    - small_group
+  # April 2026 CMS schema version
+  expected_schema_version: "3"
+  # Chunk size for streaming JSON parse (ijson)
+  streaming_chunk_mb: 64

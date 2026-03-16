@@ -1,0 +1,402 @@
+{
+  "version": "1.0",
+  "description": "ClearRate-Bench: Natural language to SQL benchmark for healthcare price intelligence over CMS MRF data. DC Metro market (35.9M rows, 30 hospitals, 4 networks).",
+  "schema": {
+    "table": "master_price_graph",
+    "columns": ["reporting_entity_name", "billing_code", "billing_code_type", "name", "negotiated_rate", "negotiated_type", "plan_name", "billing_class", "state_code", "is_current", "last_updated_on"],
+    "always_filter": "is_current = true"
+  },
+  "questions": [
+
+    {
+      "id": "cb-001",
+      "question": "Which hospital has the lowest median negotiated rate for total knee replacement?",
+      "difficulty": "easy",
+      "category": "ranking",
+      "intent_type": "lookup",
+      "billing_codes": ["470"],
+      "billing_code_type": "MS-DRG",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "Expect LewisGale Hospital Pulaski at ~$3,729"
+    },
+
+    {
+      "id": "cb-002",
+      "question": "What is the median negotiated rate for an MRI brain with contrast across all DC Metro hospitals?",
+      "difficulty": "easy",
+      "category": "ranking",
+      "intent_type": "lookup",
+      "billing_codes": ["70553"],
+      "billing_code_type": "CPT",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "Single aggregation, no GROUP BY"
+    },
+
+    {
+      "id": "cb-003",
+      "question": "List all hospitals that report rates for CPT 93454 cardiac catheterization, with their median and max rates.",
+      "difficulty": "easy",
+      "category": "comparison",
+      "intent_type": "lookup",
+      "billing_codes": ["93454"],
+      "billing_code_type": "CPT",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "Simple GROUP BY reporting_entity_name"
+    },
+
+    {
+      "id": "cb-004",
+      "question": "What is the minimum negotiated rate for a colonoscopy at any hospital in the DC Metro region?",
+      "difficulty": "easy",
+      "category": "ranking",
+      "intent_type": "lookup",
+      "billing_codes": ["45378"],
+      "billing_code_type": "CPT",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "MIN aggregation only"
+    },
+
+    {
+      "id": "cb-005",
+      "question": "How many distinct payer and plan combinations does Inova Fairfax Hospital have in the database?",
+      "difficulty": "easy",
+      "category": "data_quality",
+      "intent_type": "general",
+      "billing_codes": [],
+      "billing_code_type": null,
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "COUNT DISTINCT plan_name"
+    },
+
+    {
+      "id": "cb-006",
+      "question": "Which DC Metro hospitals do not have any rates for MS-DRG 470 total knee replacement?",
+      "difficulty": "easy",
+      "category": "data_quality",
+      "intent_type": "general",
+      "billing_codes": ["470"],
+      "billing_code_type": "MS-DRG",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "Anti-join or NOT IN subquery"
+    },
+
+    {
+      "id": "cb-007",
+      "question": "What is the median rate for an emergency room level 5 visit at MedStar Washington Hospital Center?",
+      "difficulty": "easy",
+      "category": "ranking",
+      "intent_type": "lookup",
+      "billing_codes": ["99285"],
+      "billing_code_type": "CPT",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "Single hospital filter + MEDIAN"
+    },
+
+    {
+      "id": "cb-008",
+      "question": "Show me all negotiated rates for CPT 47562 gallbladder removal sorted from lowest to highest.",
+      "difficulty": "easy",
+      "category": "ranking",
+      "intent_type": "lookup",
+      "billing_codes": ["47562"],
+      "billing_code_type": "CPT",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "ORDER BY negotiated_rate ASC"
+    },
+
+    {
+      "id": "cb-009",
+      "question": "How many price records does each hospital have in the database?",
+      "difficulty": "easy",
+      "category": "data_quality",
+      "intent_type": "general",
+      "billing_codes": [],
+      "billing_code_type": null,
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "COUNT(*) GROUP BY reporting_entity_name"
+    },
+
+    {
+      "id": "cb-010",
+      "question": "What is the most expensive single negotiated rate in the entire DC Metro dataset?",
+      "difficulty": "easy",
+      "category": "ranking",
+      "intent_type": "lookup",
+      "billing_codes": [],
+      "billing_code_type": null,
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "MAX(negotiated_rate) across all rows"
+    },
+
+    {
+      "id": "cb-011",
+      "question": "Compare median knee replacement rates between Inova Health and MedStar Health.",
+      "difficulty": "medium",
+      "category": "comparison",
+      "intent_type": "compare",
+      "billing_codes": ["470"],
+      "billing_code_type": "MS-DRG",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "GROUP BY network (ILIKE pattern)"
+    },
+
+    {
+      "id": "cb-012",
+      "question": "What are the Cigna negotiated rates for a colonoscopy at each Inova hospital?",
+      "difficulty": "medium",
+      "category": "payer_specific",
+      "intent_type": "lookup",
+      "billing_codes": ["45378"],
+      "billing_code_type": "CPT",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "plan_name ILIKE '%cigna%' AND reporting_entity_name ILIKE '%Inova%'"
+    },
+
+    {
+      "id": "cb-013",
+      "question": "Which network has the lowest median rate for cardiac catheterization: Inova, HCA Virginia, UVA Health, or MedStar?",
+      "difficulty": "medium",
+      "category": "comparison",
+      "intent_type": "compare",
+      "billing_codes": ["93454"],
+      "billing_code_type": "CPT",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "CASE WHEN network classification + GROUP BY"
+    },
+
+    {
+      "id": "cb-014",
+      "question": "Show me Aetna rates for MRI brain with contrast at HCA Virginia hospitals, broken down by hospital.",
+      "difficulty": "medium",
+      "category": "payer_specific",
+      "intent_type": "lookup",
+      "billing_codes": ["70553"],
+      "billing_code_type": "CPT",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "payer filter + HCA hospital list ILIKE"
+    },
+
+    {
+      "id": "cb-015",
+      "question": "What is the ratio of the highest to lowest median hospital rate for a gallbladder removal in the DC Metro region?",
+      "difficulty": "medium",
+      "category": "comparison",
+      "intent_type": "compare",
+      "billing_codes": ["47562"],
+      "billing_code_type": "CPT",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "MAX(median)/MIN(median) in subquery"
+    },
+
+    {
+      "id": "cb-016",
+      "question": "Compare outpatient colonoscopy rates between Virginia hospitals and Maryland or DC hospitals.",
+      "difficulty": "medium",
+      "category": "comparison",
+      "intent_type": "compare",
+      "billing_codes": ["45378"],
+      "billing_code_type": "CPT",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "state_code IN ('VA') vs IN ('MD','DC') GROUP BY"
+    },
+
+    {
+      "id": "cb-017",
+      "question": "Which payer has the lowest median rate for knee replacement across all DC Metro hospitals?",
+      "difficulty": "medium",
+      "category": "payer_specific",
+      "intent_type": "lookup",
+      "billing_codes": ["470"],
+      "billing_code_type": "MS-DRG",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "GROUP BY plan_name ORDER BY MEDIAN"
+    },
+
+    {
+      "id": "cb-018",
+      "question": "How does the spread of knee replacement rates at HCA Virginia compare to the spread at Inova? Show min, median, max, and standard deviation for each network.",
+      "difficulty": "medium",
+      "category": "comparison",
+      "intent_type": "compare",
+      "billing_codes": ["470"],
+      "billing_code_type": "MS-DRG",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "STDDEV_POP or similar + CASE WHEN network"
+    },
+
+    {
+      "id": "cb-019",
+      "question": "What are the five most common billing code types in the DC Metro price graph by record count?",
+      "difficulty": "medium",
+      "category": "data_quality",
+      "intent_type": "general",
+      "billing_codes": [],
+      "billing_code_type": null,
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "COUNT(*) GROUP BY billing_code_type ORDER BY count DESC LIMIT 5"
+    },
+
+    {
+      "id": "cb-020",
+      "question": "Which UVA Health hospital has the lowest rates for outpatient procedures under United Healthcare?",
+      "difficulty": "medium",
+      "category": "payer_specific",
+      "intent_type": "lookup",
+      "billing_codes": [],
+      "billing_code_type": null,
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "UVA + UHC + billing_class=professional + MEDIAN GROUP BY hospital"
+    },
+
+    {
+      "id": "cb-021",
+      "question": "Show the median Cigna rate for each hospital across the DC Metro region, ranked from lowest to highest. Break results into overall, inpatient, and outpatient categories.",
+      "difficulty": "hard",
+      "category": "payer_specific",
+      "intent_type": "cost_model",
+      "billing_codes": [],
+      "billing_code_type": null,
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "Multi-CTE + UNION ALL + RANK() OVER() -- the Cigna benchmark query"
+    },
+
+    {
+      "id": "cb-022",
+      "question": "For each procedure among colonoscopy, knee replacement, MRI brain, and cardiac catheterization, which hospital has the single lowest median negotiated rate?",
+      "difficulty": "hard",
+      "category": "ranking",
+      "intent_type": "compare",
+      "billing_codes": ["45378", "470", "70553", "93454"],
+      "billing_code_type": "mixed",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "Multi-procedure: UNION ALL per code + RANK() OVER(PARTITION BY billing_code)"
+    },
+
+    {
+      "id": "cb-023",
+      "question": "What percentage of DC Metro hospitals charge more than $20,000 as their median rate for a knee replacement?",
+      "difficulty": "hard",
+      "category": "cost_modeling",
+      "intent_type": "cost_model",
+      "billing_codes": ["470"],
+      "billing_code_type": "MS-DRG",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "CTE for medians + outer COUNT FILTER / total COUNT"
+    },
+
+    {
+      "id": "cb-024",
+      "question": "Which hospital shows the greatest variance between its highest and lowest payer rates for total knee replacement?",
+      "difficulty": "hard",
+      "category": "comparison",
+      "intent_type": "compare",
+      "billing_codes": ["470"],
+      "billing_code_type": "MS-DRG",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "(MAX - MIN) per hospital, ORDER BY spread DESC LIMIT 1"
+    },
+
+    {
+      "id": "cb-025",
+      "question": "Compare the top 3 and bottom 3 hospitals by median colonoscopy rate. Show their network affiliation and whether they are in Virginia, DC, or Maryland.",
+      "difficulty": "hard",
+      "category": "ranking",
+      "intent_type": "compare",
+      "billing_codes": ["45378"],
+      "billing_code_type": "CPT",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "UNION ALL of top 3 + bottom 3 via subquery + state_code join"
+    },
+
+    {
+      "id": "cb-026",
+      "question": "For each of the four networks, what fraction of their total price records are for inpatient versus outpatient billing class?",
+      "difficulty": "hard",
+      "category": "data_quality",
+      "intent_type": "general",
+      "billing_codes": [],
+      "billing_code_type": null,
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "CASE WHEN network + COUNT FILTER billing_class"
+    },
+
+    {
+      "id": "cb-027",
+      "question": "Which 10 procedures have the highest price spread (max to min ratio) across DC Metro hospitals, excluding percent-of-billed-charges rates?",
+      "difficulty": "hard",
+      "category": "comparison",
+      "intent_type": "compare",
+      "billing_codes": [],
+      "billing_code_type": null,
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "MAX/MIN GROUP BY billing_code + negotiated_type filter + ORDER BY ratio DESC LIMIT 10"
+    },
+
+    {
+      "id": "cb-028",
+      "question": "If an employer steers all knee replacement cases from Inova hospitals to the lowest-cost HCA Virginia hospital, what is the per-case median savings?",
+      "difficulty": "hard",
+      "category": "cost_modeling",
+      "intent_type": "cost_model",
+      "billing_codes": ["470"],
+      "billing_code_type": "MS-DRG",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "CTE: Inova median, HCA lowest median, difference"
+    },
+
+    {
+      "id": "cb-029",
+      "question": "Show MedStar hospitals ranked by their average negotiated rate percentile compared to all DC Metro hospitals for MS-DRG 470.",
+      "difficulty": "hard",
+      "category": "ranking",
+      "intent_type": "compare",
+      "billing_codes": ["470"],
+      "billing_code_type": "MS-DRG",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "PERCENT_RANK() or NTILE() window function"
+    },
+
+    {
+      "id": "cb-030",
+      "question": "What is the correlation between hospital size (number of rate records) and median knee replacement rate across all DC Metro hospitals?",
+      "difficulty": "hard",
+      "category": "cost_modeling",
+      "intent_type": "general",
+      "billing_codes": ["470"],
+      "billing_code_type": "MS-DRG",
+      "gold_sql": null,
+      "gold_result_preview": null,
+      "notes": "CORR(count, median_rate) -- tests DuckDB statistical functions"
+    }
+
+  ]
+}
